@@ -21,12 +21,41 @@ defmodule ChromicPDF.ChromeImpl do
   # NOTE: The redirection is needed due to obscure behaviour of Ports that use more than 2 FDs.
   # https://github.com/bitcrowd/chromic_pdf/issues/76
 
+  # For description of the used command line options, see
+  # https://peter.sh/experiments/chromium-command-line-switches/
+  # https://cri.dev/posts/2020-04-04-Full-list-of-Chromium-Puppeteer-flags/
+
   defp chrome_command(opts) do
     [
       ~s("#{chrome_executable(opts[:chrome_executable])}"),
-      "--headless --disable-gpu --remote-debugging-pipe"
+      "--headless",
+      "--remote-debugging-pipe",
+
+      "--single-progress",
+      "--no-first-run",
+      "--no-service-autorun",
+
+      "--disable-accelerated-2d-canvas",
+      "--disable-gpu",
+      #"--force-color-profile=srgb",
+
+      "--hide-scrollbars",
+      "--disable-infobars",
+      "--disable-notifications",
+      "--disable-background-timer-throttling",
+      "--disable-backgrounding-occluded-windows",
+      "--disable-breakpad",
+      "--disable-component-extensions-with-background-pages",
+      "--disable-extensions",
+      "--disable-features=TranslateUI,BlinkGenPropertyTrees",
+      "--disable-ipc-flooding-protection",
+      "--disable-renderer-backgrounding",
+      "--enable-features=NetworkService,NetworkServiceInProcess",
+      "--metrics-recording-only",
+      "--mute-audio"
     ]
-    |> append_if("--no-sandbox", no_sandbox?(opts))
+
+    |> append_if("--no-sandbox --no-zygote", no_sandbox?(opts))
     |> append_if(to_string(opts[:chrome_args]), !!opts[:chrome_args])
     |> append_if("2>/dev/null 3<&0 4>&1", discard_stderr?(opts))
     |> Enum.join(" ")
