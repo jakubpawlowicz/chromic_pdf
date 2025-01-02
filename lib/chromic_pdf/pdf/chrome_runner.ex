@@ -68,6 +68,7 @@ defmodule ChromicPDF.ChromeRunner do
   @spec shell_command(binary() | [binary()], keyword()) :: binary()
   def shell_command(extra_args \\ "", opts) do
     Enum.join([~s("#{executable(opts)}") | args(extra_args, opts)], " ")
+    |> IO.inspect()
   end
 
   @default_executables [
