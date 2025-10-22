@@ -3,6 +3,8 @@
 defmodule ChromicPDF.GhostscriptRunner do
   @moduledoc false
 
+  require Logger
+
   import ChromicPDF.Utils, only: [semver_compare: 2, system_cmd!: 3, with_app_config_cache: 2]
 
   @default_args [
@@ -107,6 +109,9 @@ defmodule ChromicPDF.GhostscriptRunner do
         maybe_disable_new_interpreter(),
         command.args
       ])
+
+    Logger.info("#{__MODULE__}: '#{inspect(ghostscript_executable())}'")
+    Logger.info("#{__MODULE__}: '#{inspect(args)}'")
 
     system_cmd!(ghostscript_executable(), args, [])
   end

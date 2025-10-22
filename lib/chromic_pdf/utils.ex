@@ -28,7 +28,7 @@ defmodule ChromicPDF.Utils do
     try do
       cb.(path)
     after
-      File.rm_rf!(path)
+      # File.rm_rf!(path)
     end
   end
 
